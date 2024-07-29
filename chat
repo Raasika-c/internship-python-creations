@@ -1,0 +1,47 @@
+import nltk
+from nltk.chat.util import Chat, reflections
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer as ps
+import random
+
+nltk.download('punkt')
+
+stemmer = ps()
+
+pairs = [
+    (r"(hi|hello|hey)", ["Hello!", "Hi there!", "Hey!", "Hey, welcome!"]),
+    (r"what is your name\??", ["I'm a chatbot.", "You can call me Chatbot."]),
+    (r"how are you\??", ["I'm doing well, thank you!", "I'm just a bunch of code, but I'm good!", "Pretty good"]),
+    (r"what can you do\??", ["I can chat with you!", "I can respond to your messages.", "I can help you", "I can be your chatting partner"]),
+    (r"(bye|goodbye)", ["Goodbye!", "See you later!", "Take care!", "See you again"]),
+    (r"what is your favorite color\??", ["I like the color pink.", "I don't have preferences, but pink is nice!"]),
+    (r"tell me a joke", ["Why don't programmers like nature? It has too many bugs.", "Why did the bicycle fall over? Because it's two-tired!"]),
+    (r"how old are you\??", ["I was created recently, so I'm just a few moments old.", "I don't age, I'm eternal!"]),
+    (r"what is your purpose\??", ["My purpose is to assist you and have interesting conversations.", "I'm here to help and chat with you.", "To chat with you!"]),
+    (r"what time is it\??", ["I don't have a watch, but you can check your device's clock.", "I'm not sure, but your device should have the correct time."]),
+    (r"what is python\??", ["It is a programming language.", "It is a high-level interpreting language."]),
+]
+
+chat = Chat(pairs, reflections)
+
+def preprocess_input(text):
+    tokens = word_tokenize(text)
+    return " ".join([stemmer.stem(word.lower()) for word in tokens])
+
+print("Chatbot: Hello! Ask me anything.")
+
+while True:
+    user_input = input("You: ").strip()
+    
+    if user_input.lower() in ["bye", "goodbye"]:
+        print("Chatbot: Goodbye!")
+        break
+    
+    processed_input = preprocess_input(user_input)
+    
+    response = chat.respond(user_input)
+    
+    if not response:
+        response = random.choice(["Sorry, I didn't understand that.", "Can you rephrase your question?", "I don't know how to respond to that.", "Can you tell me in another way."])
+    
+    print("Chatbot:", response)
